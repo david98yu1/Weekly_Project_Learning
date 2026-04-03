@@ -1,0 +1,3 @@
+You are creating a bank system. Create an API where you want to be able to withdraw money from user account. Upon clarification, each user has one account. Write Entity, Repository, Service, Controller. 
+Later, assuming each user may have multiple accounts, use Java Streams to filter a user's accounts for those with a balance exceeding 1,000 and collect them into a list.
+Use Java streams to sum the balances of a user's accounts that exceed 1,000
