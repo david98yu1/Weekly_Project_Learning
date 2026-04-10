@@ -1,5 +1,8 @@
 package com.aierken.aierken_practice.Service;
 
+import com.aierken.aierken_practice.Exception.AccountNotFoundException;
+import com.aierken.aierken_practice.Exception.InsufficientBalanceException;
+import com.aierken.aierken_practice.Exception.UnauthorizedAccessException;
 import com.aierken.aierken_practice.entity.Account;
 import com.aierken.aierken_practice.repository.AccountRepository;
 import com.aierken.aierken_practice.repository.UserRepository;
@@ -22,13 +25,13 @@ public class AccountService {
     public double withdraw(Long userId, Long accountId, double amount){
         Account account1 = accountRepository.findById(accountId);
         if(account1 == null){
-            throw new RuntimeException("Account not found");
+            throw new AccountNotFoundException("Account not found");
         }
         if(!account1.getUserId().equals(userId)){
-            throw new RuntimeException("User is not allowed to withdraw");
+            throw new UnauthorizedAccessException("User is not allowed to withdraw");
         }
         if(account1.getBalance() < amount){
-            throw new RuntimeException("Insufficient balance");
+            throw new InsufficientBalanceException("Insufficient balance");
         }
         account1.setBalance(account1.getBalance()-amount);
         accountRepository.save(account1);

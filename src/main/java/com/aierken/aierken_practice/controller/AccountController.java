@@ -2,6 +2,7 @@ package com.aierken.aierken_practice.controller;
 
 import com.aierken.aierken_practice.Exception.InsufficientBalanceException;
 import com.aierken.aierken_practice.Exception.AccountNotFoundException;
+import com.aierken.aierken_practice.Exception.UnauthorizedAccessException;
 import com.aierken.aierken_practice.Service.AccountService;
 import com.aierken.aierken_practice.dto.AccountResponse;
 import com.aierken.aierken_practice.dto.ErrorResponse;
@@ -25,7 +26,7 @@ public class AccountController {
 
     @PostMapping("/accounts/withdraw")
     public ResponseEntity<Double> withdraw(@RequestBody WithdrawRequest request) {
-        double remainingBalance = accountService.withdraw(request.getAccountId(), request.getAmount());
+        double remainingBalance = accountService.withdraw(request.getUserId(), request.getAccountId(), request.getAmount());
         return ResponseEntity.ok(remainingBalance);
     }
 
@@ -43,6 +44,11 @@ public class AccountController {
     @ExceptionHandler(AccountNotFoundException.class)
     public ResponseEntity<ErrorResponse> HandleAccountNotFoundException(AccountNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ErrorResponse> HandleUnauthorizedAccessException(UnauthorizedAccessException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(InsufficientBalanceException.class)
