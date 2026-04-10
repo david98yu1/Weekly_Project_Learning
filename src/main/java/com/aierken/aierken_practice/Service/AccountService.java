@@ -19,16 +19,20 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public double withdraw(Long accountId, double amount){
+    public double withdraw(Long userId, Long accountId, double amount){
         Account account1 = accountRepository.findById(accountId);
         if(account1 == null){
             throw new RuntimeException("Account not found");
+        }
+        if(!account1.getUserId().equals(userId)){
+            throw new RuntimeException("User is not allowed to withdraw");
         }
         if(account1.getBalance() < amount){
             throw new RuntimeException("Insufficient balance");
         }
         account1.setBalance(account1.getBalance()-amount);
         accountRepository.save(account1);
+
 
         return account1.getBalance();
     }
@@ -40,9 +44,9 @@ public class AccountService {
     }
 
     public double sumBalancesOver1000(Long userId) throws Exception {
-        return accountRepository.findAccountsByUserId(userId).stream()
-                .filter(account -> account.getBalance()>1000)
+        double totalresult = accountRepository.findAccountsByUserId(userId).stream()
                 .mapToDouble(Account::getBalance)
                 .sum();
+        return totalresult > 1000?totalresult:0;
     }
 }
