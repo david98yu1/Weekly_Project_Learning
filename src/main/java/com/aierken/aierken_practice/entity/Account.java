@@ -1,4 +1,4 @@
-package com.aierken.bank.entity;
+package com.aierken.aierken_practice.entity;
 import lombok.Data;
 
 @Data

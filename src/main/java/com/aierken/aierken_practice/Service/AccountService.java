@@ -1,10 +1,20 @@
 package com.aierken.aierken_practice.Service;
 
+import com.aierken.aierken_practice.entity.Account;
+import com.aierken.aierken_practice.repository.AccountRepository;
+import com.aierken.aierken_practice.repository.UserRepository;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class AccountService {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+
+    public AccountService(UserRepository userRepository, AccountRepository accountRepository) {
+        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
+    }
 
     public double withdraw(Long accountId, double amount){
         Account account1 = accountRepository.findById(accountId);
@@ -20,14 +30,14 @@ public class AccountService {
         return account1.getBalance();
     }
 
-    public List<Account> filterAccountsOver1000(Long userId){
-        return accountRepository.findByUserId(userId).stream()
+    public List<Account> filterAccountsOver1000(Long userId) throws Exception {
+        return accountRepository.findAllByUserId(userId).stream()
                 .filter(account -> account.getBalance()>1000)
                 .collect(Collectors.toList());
     }
 
-    public double sumBalancesOver1000(Long userId){
-        return accountRepository.findByUserId(userId).stream()
+    public double sumBalancesOver1000(Long userId) throws Exception {
+        return accountRepository.findAllByUserId(userId).stream()
                 .filter(account -> account.getBalance()>1000)
                 .mapToDouble(Account::getBalance)
                 .sum();

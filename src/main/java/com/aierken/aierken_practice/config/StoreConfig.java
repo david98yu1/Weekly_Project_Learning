@@ -1,6 +1,6 @@
-package com.aierken.bank.config;
-import com.aierken.bank.entity.Account;
-import com.aierken.bank.entity.User;
+package com.aierken.aierken_practice.config;
+import com.aierken.aierken_practice.entity.Account;
+import com.aierken.aierken_practice.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
