@@ -31,13 +31,13 @@ public class AccountService {
     }
 
     public List<Account> filterAccountsOver1000(Long userId) throws Exception {
-        return accountRepository.findAllByUserId(userId).stream()
+        return accountRepository.findAccountsByUserId(userId).stream()
                 .filter(account -> account.getBalance()>1000)
                 .collect(Collectors.toList());
     }
 
     public double sumBalancesOver1000(Long userId) throws Exception {
-        return accountRepository.findAllByUserId(userId).stream()
+        return accountRepository.findAccountsByUserId(userId).stream()
                 .filter(account -> account.getBalance()>1000)
                 .mapToDouble(Account::getBalance)
                 .sum();

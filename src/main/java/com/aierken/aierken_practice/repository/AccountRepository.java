@@ -26,7 +26,7 @@ public class AccountRepository {
     }
 
 
-    public List<Account> findAllByUserId(Long userId) throws Exception{
+    public List<Account> findAccountsByUserId(Long userId) throws Exception{
         if(!userStore.containsKey(userId)) {
             throw new Exception("User not found");
         }
