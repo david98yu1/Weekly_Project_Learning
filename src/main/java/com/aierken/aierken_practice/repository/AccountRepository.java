@@ -18,5 +18,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     void deleteByAccountNumber(String accountNumber);
 
-    void deleteById(Long id);
+    void deleteById(Long account_id);
 }
