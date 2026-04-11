@@ -23,11 +23,11 @@ public class AccountService {
     }
 
     public double withdraw(Long userId, Long accountId, double amount){
-        //Optional<Account> account1 = accountRepository.findById(accountId);
-        Account account1 = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+        Account account1 = accountRepository.findById(accountId).orElseThrow(()-> {
+            return new AccountNotFoundException("Account not found");
+        });
 
-        if(account1.getUser() == null || !(account1.getUser().getId().equals(userId))){
+        if(!account1.getUser().getId().equals(userId)){
             throw new UnauthorizedAccessException("User is not allowed to withdraw");
         }
         if(account1.getBalance() < amount){
