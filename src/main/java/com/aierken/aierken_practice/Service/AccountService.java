@@ -25,13 +25,13 @@ public class AccountService {
     public double withdraw(Long userId, Long accountId, double amount){
         //Optional<Account> account1 = accountRepository.findById(accountId);
         Account account1 = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
         if(account1.getUser() == null || !(account1.getUser().getId().equals(userId))){
             throw new UnauthorizedAccessException("User is not allowed to withdraw");
         }
         if(account1.getBalance() < amount){
-            throw new RuntimeException("Insufficient balance");
+            throw new InsufficientBalanceException("Insufficient balance");
         }
 
         account1.setBalance(account1.getBalance() - amount);
@@ -42,7 +42,7 @@ public class AccountService {
 
     public List<Account> filterAccountsOver1000(Long userId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new AccountNotFoundException("User not found"));
 
         return accountRepository.findByUser_Id(userId).stream()
                 .filter(account -> account.getBalance() > 1000)
