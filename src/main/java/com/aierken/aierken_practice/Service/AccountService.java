@@ -47,7 +47,7 @@ public class AccountService {
         }
 
         if(account.getBalance() < amount){
-            throw new RuntimeException("Insufficient balance");
+            throw new InsufficientBalanceException("Insufficient balance");
         }
 
         double before = account.getBalance();
@@ -99,10 +99,10 @@ public class AccountService {
         Account toAccount = accountRepository.findByAccountNumber(toAccountNumber).orElseThrow(()-> new AccountNotFoundException("To Account not found"));
 
         double fromBefore = fromAccount.getBalance();
-        double fromAfter = fromAccount.getBalance() + amount;
+        double fromAfter = fromAccount.getBalance() - amount;
 
         double toBefore = toAccount.getBalance();
-        double toAfter = toAccount.getBalance() - amount;
+        double toAfter = toAccount.getBalance() + amount;
 
         if (fromAccount.getBalance() < amount) {
             throw new InsufficientBalanceException("Insufficient balance");
@@ -125,7 +125,7 @@ public class AccountService {
 
     public List<Account> filterAccountsOver1000(Long userId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new AccountNotFoundException("User not found"));
 
         return accountRepository.findByUser_Id(userId).stream()
                 .filter(account -> account.getBalance() > 1000)
