@@ -1,16 +1,8 @@
 package com.aierken.aierken_practice.controller;
 
-import com.aierken.aierken_practice.Exception.InsufficientBalanceException;
-import com.aierken.aierken_practice.Exception.AccountNotFoundException;
-import com.aierken.aierken_practice.Exception.UnauthorizedAccessException;
 import com.aierken.aierken_practice.Service.AccountService;
-import com.aierken.aierken_practice.dto.AccountResponse;
-import com.aierken.aierken_practice.dto.ErrorResponse;
-import com.aierken.aierken_practice.dto.SumResponse;
-import com.aierken.aierken_practice.dto.WithdrawRequest;
+import com.aierken.aierken_practice.dto.*;
 import com.aierken.aierken_practice.entity.Account;
-import com.aierken.aierken_practice.entity.Transaction;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,38 +29,38 @@ public class AccountController {
         return ResponseEntity.ok(remainingBalance);
     }
 
+    @PostMapping("/accounts/transfer")
+    public ResponseEntity<TransferResponse> transfer(@RequestBody TransferRequest request) {
+        accountService.transfer(request.getFromId(), request.getToId(), request.getAmount());
+        return ResponseEntity.ok(new TransferResponse(request.getFromId(), request.getToId(), request.getAmount(), "SUCCESS"));
+    }
 
-
-    @GetMapping("/users/{userId}/accounts/rich")
-    public ResponseEntity<List<AccountResponse>> rich(@PathVariable Long userId) throws Exception {
-        List<AccountResponse> responses = accountService.filterAccountsOver1000(userId).stream().map(this::toResponse).toList();
+    @GetMapping("/users/accounts/rich")
+    public ResponseEntity<List<AccountResponse>> rich(@RequestBody AccountRequest request) throws Exception {
+        List<AccountResponse> responses = accountService.filterAccountsOver1000(request.getUserId()).stream().map(this::toResponse).toList();
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/users/{userId}/accounts/sum")
-    public ResponseEntity<SumResponse> sum(@PathVariable Long userId) throws Exception {
-        return ResponseEntity.ok(new SumResponse(accountService.sumBalancesOver1000(userId)));
+    @GetMapping("/users/accounts/sum")
+    public ResponseEntity<SumResponse> sum(@RequestBody AccountRequest request) throws Exception {
+        return ResponseEntity.ok(new SumResponse(accountService.sumBalancesOver1000(request.getUserId())));
     }
 
-    @GetMapping("/accounts/{accountId}/transactions")
-    public ResponseEntity<List<Transaction>> getTransactions(@PathVariable String accountNumber) throws Exception {
-        return ResponseEntity.ok(accountService.getTransactionsByAccountNumber(accountNumber));
+    @GetMapping("/accounts/transactions")
+    public ResponseEntity<List<TransactionResponse>> getTransactions(@RequestBody TransactionRequest request) throws Exception {
+        List<TransactionResponse> responses = accountService.getTransactionsByAccountNumber(request.getAccountNumber())
+                .stream()
+                .map(t -> new TransactionResponse(t.getId(), t.getType(), t.getAmount(), t.getBalanceBefore(), t.getBalanceAfter(), t.getCreatedAt()))
+                .toList();
+        return ResponseEntity.ok(responses);
     }
 
-    @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<ErrorResponse> HandleAccountNotFoundException(AccountNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
+    @GetMapping("/accounts")
+    public ResponseEntity<List<AccountResponse>> getAccount(@RequestBody AccountRequest request) throws Exception {
+        List<AccountResponse> responses = accountService.getAccountsByUserId(request.getUserId()).stream().map(this::toResponse).toList();
+        return ResponseEntity.ok(responses);
     }
 
-    @ExceptionHandler(UnauthorizedAccessException.class)
-    public ResponseEntity<ErrorResponse> HandleUnauthorizedAccessException(UnauthorizedAccessException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(e.getMessage()));
-    }
-
-    @ExceptionHandler(InsufficientBalanceException.class)
-    public ResponseEntity<ErrorResponse> HandleInsufficientBalanceException(InsufficientBalanceException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
-    }
 
     private AccountResponse toResponse(Account account) {
         return new AccountResponse(

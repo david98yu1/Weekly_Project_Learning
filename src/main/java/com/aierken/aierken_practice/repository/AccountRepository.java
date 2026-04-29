@@ -1,6 +1,7 @@
 package com.aierken.aierken_practice.repository;
 
 import com.aierken.aierken_practice.entity.Account;
+import com.aierken.aierken_practice.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     void deleteByAccountNumber(String accountNumber);
 
     void deleteById(Long account_id);
+
+    Long user(User user);
 }
